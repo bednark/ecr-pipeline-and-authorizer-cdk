@@ -4,6 +4,7 @@ from aws_cdk import (
     aws_cognito as cognito,
     aws_iam as iam
 )
+import aws_cdk as core
 from constructs import Construct
 
 class CreateCognitoECRAuth(Stack):
@@ -20,6 +21,11 @@ class CreateCognitoECRAuth(Stack):
       email = cognito.UserPoolEmail.with_cognito()
     )
 
+    core.CfnOutput(self, 'PrivateECRUserPoolId',
+      value = ecr_auth_user.user_pool_id,
+      export_name = 'PrivateECRUserPoolId'
+    )
+
     ecr_auth_user_client = ecr_auth_user.add_client('PrivateECRUserPoolApp',
       auth_flows = cognito.AuthFlow(
         user_password = True
@@ -30,6 +36,11 @@ class CreateCognitoECRAuth(Stack):
       disable_o_auth = True
     )
 
+    core.CfnOutput(self, 'PrivateECRUserPoolAppId',
+      value = ecr_auth_user_client.user_pool_client_id,
+      export_name = 'PrivateECRUserPoolAppId'
+    )
+
     ecr_auth_identity = cognito.CfnIdentityPool(self, 'PrivateECRIdentityPool',
       allow_unauthenticated_identities = False,
       cognito_identity_providers = [
@@ -38,6 +49,11 @@ class CreateCognitoECRAuth(Stack):
           provider_name = ecr_auth_user.user_pool_provider_name
         )
       ]
+    )
+
+    core.CfnOutput(self, 'PrivateECRIdentityPoolId',
+      value = ecr_auth_identity.ref,
+      export_name = 'PrivateECRIdentityPoolId'
     )
 
     cognito_policy = iam.ManagedPolicy(self, 'PrivateECRIdentityPoolPolicy',
@@ -78,6 +94,6 @@ class CreateCognitoECRAuth(Stack):
     cognito.CfnIdentityPoolRoleAttachment(self, 'PrivateECRIdentityPoolPolicyAttachment',
       identity_pool_id = ecr_auth_identity.ref,
       roles = {
-        "authenticated": cognito_role.role_arn
+        'authenticated': cognito_role.role_arn
       }
     )
