@@ -74,7 +74,8 @@ def lambda_handler(event, context):
         'error_msg': 'Not Authorized'
       }
     }
-  except:
+  except Exception as e:
+    print(e)
     return {
       "statusCode": 500,
       "headers": {
