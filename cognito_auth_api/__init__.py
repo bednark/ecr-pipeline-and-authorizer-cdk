@@ -21,7 +21,7 @@ class CognitoAuthAPI(Stack):
 
     ecr_auth_lambda.add_environment('CLIENT_ID', core.Fn.import_value('PrivateECRUserPoolAppId'))
     ecr_auth_lambda.add_environment('IDENTITY_ID', core.Fn.import_value('PrivateECRIdentityPoolId'))
-    ecr_auth_lambda.add_environment('IDP_POOL', f'cognito-idp.eu-west-1.amazonaws.com/{core.Fn.import_value('PrivateECRUserPoolId')}')
+    ecr_auth_lambda.add_environment('IDP_POOL', f'cognito-idp.eu-west-1.amazonaws.com/{core.Fn.import_value("PrivateECRUserPoolId")}')
     ecr_auth_lambda.add_environment('REGION', self.region)
 
     ecr_rest_api = apigateway.RestApi(self,
